@@ -9,45 +9,21 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-    }
-    .font-mono-code {
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .perspective-1000 {
-      perspective: 1000px;
-    }
-    .transform-style-3d {
-      transform-style: preserve-3d;
-    }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-mono-code { font-family: 'JetBrains Mono', monospace; }
+    .perspective-1000 { perspective: 1000px; }
+    .transform-style-3d { transform-style: preserve-3d; }
     .backface-hidden {
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
     }
-    .rotate-y-180 {
-      transform: rotateY(180deg);
-    }
-    /* Subtle custom scrollbar */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #f1f5f9;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 9999px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #94a3b8;
-    }
+    .rotate-y-180 { transform: rotateY(180deg); }
+    #flashcard-inner.flipped { transform: rotateY(180deg); }
   </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col selection:bg-rose-500 selection:text-white">
 
-  <!-- TOP HEADER & EASTER EGG -->
+  <!-- TOP HEADER -->
   <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-40">
     <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
       <div class="flex items-center space-x-3">
@@ -59,13 +35,13 @@
             <h1 class="text-base sm:text-lg font-bold text-white tracking-tight">Purva's AI-900 Prep Hub</h1>
             <span class="text-xs px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 font-medium">AI-900 & AI-901</span>
           </div>
-          <p class="text-xs text-slate-400">Curated with ❤️ by Agam • Master Azure AI</p>
+          <p class="text-xs text-slate-400">Curated with love by Agam • Master Azure AI</p>
         </div>
       </div>
 
-      <!-- Agam's Love Note Trigger -->
-      <button onclick="showAgamNote()" class="group relative flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-300 text-xs font-semibold transition-all">
-        <span class="animate-pulse">💖</span>
+      <!-- Love Note Trigger -->
+      <button onclick="window.showAgamNote()" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-300 text-xs font-semibold transition-all">
+        <span>&#128150;</span>
         <span class="hidden sm:inline">A Message from Agam</span>
         <span class="sm:hidden">For Purva</span>
       </button>
@@ -73,226 +49,473 @@
 
     <!-- NAVIGATION TABS -->
     <div class="max-w-5xl mx-auto px-4 flex space-x-2 border-t border-slate-800/80 pt-1 pb-1">
-      <button onclick="switchTab('flashcards')" id="tab-btn-flashcards" class="flex-1 sm:flex-initial flex items-center justify-center space-x-2 px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all text-white bg-blue-600 shadow-sm shadow-blue-500/30">
-        <span>🗂️</span>
+      <button onclick="window.switchTab('flashcards')" id="tab-btn-flashcards" class="flex-1 sm:flex-initial flex items-center justify-center space-x-2 px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all text-white bg-blue-600 shadow-sm shadow-blue-500/30">
+        <span>&#128194;</span>
         <span>Flashcards (Core)</span>
       </button>
-      <button onclick="switchTab('cram')" id="tab-btn-cram" class="flex-1 sm:flex-initial flex items-center justify-center space-x-2 px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800">
-        <span>⚡</span>
+      <button onclick="window.switchTab('cram')" id="tab-btn-cram" class="flex-1 sm:flex-initial flex items-center justify-center space-x-2 px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800">
+        <span>&#9889;</span>
         <span>Quick Cram Matrix</span>
       </button>
-      <button onclick="switchTab('quiz')" id="tab-btn-quiz" class="flex-1 sm:flex-initial flex items-center justify-center space-x-2 px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800">
-        <span>📝</span>
+      <button onclick="window.switchTab('quiz')" id="tab-btn-quiz" class="flex-1 sm:flex-initial flex items-center justify-center space-x-2 px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800">
+        <span>&#128221;</span>
         <span>Practice Drill</span>
       </button>
     </div>
   </header>
 
-  <!-- MAIN VIEW CONTAINER -->
+  <!-- MAIN CONTAINER -->
   <main class="flex-1 max-w-5xl mx-auto w-full px-4 py-6">
 
-    <!-- ========================================== -->
-    <!-- TAB 1: FLASHCARDS (THE STAR OF THE SHOW)   -->
-    <!-- ========================================== -->
+    <!-- TAB 1: FLASHCARDS -->
     <section id="tab-flashcards" class="space-y-6">
-      
-      <!-- Filter Bar -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-800/50 p-3 rounded-2xl border border-slate-800">
-        <div class="flex items-center space-x-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+        <div class="flex items-center space-x-2 overflow-x-auto pb-1 sm:pb-0">
           <span class="text-xs font-bold text-slate-400 uppercase tracking-wider px-1">Domain:</span>
-          <button onclick="filterDomain('all')" class="domain-btn px-3 py-1 text-xs rounded-lg font-medium transition-all bg-blue-600 text-white" data-domain="all">All (36)</button>
-          <button onclick="filterDomain('responsible')" class="domain-btn px-3 py-1 text-xs rounded-lg font-medium transition-all bg-slate-800 text-slate-300 hover:bg-slate-700" data-domain="responsible">Responsible AI</button>
-          <button onclick="filterDomain('ml')" class="domain-btn px-3 py-1 text-xs rounded-lg font-medium transition-all bg-slate-800 text-slate-300 hover:bg-slate-700" data-domain="ml">Machine Learning</button>
-          <button onclick="filterDomain('vision')" class="domain-btn px-3 py-1 text-xs rounded-lg font-medium transition-all bg-slate-800 text-slate-300 hover:bg-slate-700" data-domain="vision">Computer Vision</button>
-          <button onclick="filterDomain('nlp')" class="domain-btn px-3 py-1 text-xs rounded-lg font-medium transition-all bg-slate-800 text-slate-300 hover:bg-slate-700" data-domain="nlp">NLP & Speech</button>
-          <button onclick="filterDomain('genai')" class="domain-btn px-3 py-1 text-xs rounded-lg font-medium transition-all bg-slate-800 text-slate-300 hover:bg-slate-700" data-domain="genai">GenAI & Foundry</button>
+          <button onclick="window.filterDomain('all')" class="domain-btn px-3 py-1 text-xs rounded-lg font-medium transition-all bg-blue-600 text-white" data-domain="all">All (36)</button>
+          <button onclick="window.filterDomain('responsible')" class="domain-btn px-3 py-1 text-xs rounded-lg font-medium transition-all bg-slate-800 text-slate-300 hover:bg-slate-700" data-domain="responsible">Responsible AI</button>
+          <button onclick="window.filterDomain('ml')" class="domain-btn px-3 py-1 text-xs rounded-lg font-medium transition-all bg-slate-800 text-slate-300 hover:bg-slate-700" data-domain="ml">Machine Learning</button>
+          <button onclick="window.filterDomain('vision')" class="domain-btn px-3 py-1 text-xs rounded-lg font-medium transition-all bg-slate-800 text-slate-300 hover:bg-slate-700" data-domain="vision">Computer Vision</button>
+          <button onclick="window.filterDomain('nlp')" class="domain-btn px-3 py-1 text-xs rounded-lg font-medium transition-all bg-slate-800 text-slate-300 hover:bg-slate-700" data-domain="nlp">NLP & Speech</button>
+          <button onclick="window.filterDomain('genai')" class="domain-btn px-3 py-1 text-xs rounded-lg font-medium transition-all bg-slate-800 text-slate-300 hover:bg-slate-700" data-domain="genai">GenAI & Foundry</button>
         </div>
-
-        <div class="flex items-center justify-end space-x-2">
-          <button onclick="shuffleCards()" title="Shortcut: S" class="px-2.5 py-1 text-xs rounded-lg bg-slate-700/60 hover:bg-slate-700 text-slate-300 flex items-center space-x-1 transition-all">
-            <span>🔀</span>
-            <span>Shuffle</span>
-          </button>
-        </div>
+        <button onclick="window.shuffleCards()" class="px-3 py-1 text-xs rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-300 flex items-center space-x-1 transition-all self-end sm:self-auto">
+          <span>&#128256;</span>
+          <span>Shuffle</span>
+        </button>
       </div>
 
-      <!-- Flashcard Stage -->
+      <!-- Flashcard Element -->
       <div class="flex flex-col items-center">
-        
-        <!-- Flashcard Flip Box -->
-        <div class="w-full max-w-2xl h-[380px] sm:h-[350px] perspective-1000 cursor-pointer select-none" onclick="flipCard()">
+        <div class="w-full max-w-2xl h-[380px] sm:h-[350px] perspective-1000 cursor-pointer select-none" onclick="window.flipCard()">
           <div id="flashcard-inner" class="relative w-full h-full transform-style-3d transition-transform duration-500 rounded-3xl shadow-2xl">
             
-            <!-- FRONT OF CARD -->
+            <!-- Front -->
             <div class="absolute inset-0 backface-hidden bg-gradient-to-br from-slate-800 to-slate-850 border border-slate-700/80 rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-xl">
               <div class="flex items-center justify-between">
-                <span id="card-domain-badge" class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                  Domain Name
-                </span>
+                <span id="card-domain-badge" class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30">Responsible AI</span>
                 <span class="text-xs font-mono-code text-slate-400" id="card-counter">1 / 36</span>
               </div>
-
               <div class="my-auto py-4 text-center">
                 <span class="text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2 block">Exam Scenario / Concept Prompt</span>
-                <p id="card-question" class="text-lg sm:text-xl font-bold text-white leading-snug">
-                  Question prompt appears here
-                </p>
+                <p id="card-question" class="text-lg sm:text-xl font-bold text-white leading-snug">Loading question...</p>
               </div>
-
               <div class="flex items-center justify-between text-xs text-slate-400 pt-3 border-t border-slate-700/50">
-                <span class="flex items-center space-x-1">
-                  <span>💡</span>
-                  <span class="text-slate-400">Think: What Azure service or principle applies?</span>
-                </span>
-                <span class="text-blue-400 font-semibold flex items-center space-x-1">
-                  <span>Tap to reveal answer</span>
-                  <span>🔄</span>
-                </span>
+                <span>&#128161; Think: Which service or principle fits?</span>
+                <span class="text-blue-400 font-semibold">Tap to flip &#128257;</span>
               </div>
             </div>
 
-            <!-- BACK OF CARD -->
+            <!-- Back -->
             <div class="absolute inset-0 backface-hidden rotate-y-180 bg-gradient-to-br from-slate-850 to-indigo-950 border border-indigo-500/40 rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-2xl">
               <div class="flex items-center justify-between">
-                <span id="card-domain-badge-back" class="px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                  Domain Name
-                </span>
-                <span class="text-xs text-emerald-400 font-semibold flex items-center space-x-1">
-                  <span>✓</span>
-                  <span>Correct Answer</span>
-                </span>
+                <span id="card-domain-badge-back" class="px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">Responsible AI</span>
+                <span class="text-xs text-emerald-400 font-semibold">&#10003; Correct Answer</span>
               </div>
-
               <div class="my-auto py-2">
                 <div class="mb-2">
                   <span class="text-xs uppercase tracking-wider text-indigo-300 font-semibold block">Key Service / Principle</span>
-                  <h3 id="card-answer" class="text-xl sm:text-2xl font-extrabold text-emerald-300 tracking-tight">
-                    Answer Name
-                  </h3>
+                  <h3 id="card-answer" class="text-xl sm:text-2xl font-extrabold text-emerald-300 tracking-tight">Answer Name</h3>
                 </div>
-                <p id="card-explanation" class="text-sm text-slate-200 leading-relaxed mb-3">
-                  Concise rationale explaining why this is the exact answer.
-                </p>
-                <div id="card-trap-container" class="bg-indigo-950/60 border border-indigo-500/30 rounded-xl p-2.5 text-xs text-indigo-200">
-                  <strong class="text-amber-300 font-semibold">⚠️ Exam Trigger / Trap:</strong>
-                  <span id="card-trap">Watch out for this specific keyword.</span>
+                <p id="card-explanation" class="text-sm text-slate-200 leading-relaxed mb-3">Explanation text.</p>
+                <div class="bg-indigo-950/60 border border-indigo-500/30 rounded-xl p-2.5 text-xs text-indigo-200">
+                  <strong class="text-amber-300 font-semibold">&#9888; Exam Key:</strong>
+                  <span id="card-trap">Trap keyword notes.</span>
                 </div>
               </div>
-
               <div class="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-indigo-900/50">
-                <span>Press <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 font-mono-code">Space</kbd> to flip</span>
-                <span class="text-slate-300">Tap anywhere to flip back 🔄</span>
+                <span>Press <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 font-mono-code">Space</kbd> to flip</span>
+                <span class="text-slate-300">Tap anywhere to flip back &#128257;</span>
               </div>
             </div>
 
           </div>
         </div>
 
-        <!-- CONTROLS -->
+        <!-- Controls -->
         <div class="flex items-center justify-center space-x-4 mt-6">
-          <button onclick="prevCard()" title="Shortcut: ←" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm border border-slate-700 flex items-center space-x-2 transition-all active:scale-95 shadow-md">
-            <span>←</span>
+          <button onclick="window.prevCard()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm border border-slate-700 flex items-center space-x-2 transition-all active:scale-95 shadow-md">
+            <span>&larr;</span>
             <span>Previous</span>
           </button>
-          
-          <button onclick="flipCard()" title="Shortcut: Space" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm shadow-lg shadow-blue-500/30 flex items-center space-x-2 transition-all active:scale-95">
+          <button onclick="window.flipCard()" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm shadow-lg shadow-blue-500/30 flex items-center space-x-2 transition-all active:scale-95">
             <span>Flip Card</span>
-            <span>🔄</span>
+            <span>&#128257;</span>
           </button>
-
-          <button onclick="nextCard()" title="Shortcut: →" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm border border-slate-700 flex items-center space-x-2 transition-all active:scale-95 shadow-md">
+          <button onclick="window.nextCard()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm border border-slate-700 flex items-center space-x-2 transition-all active:scale-95 shadow-md">
             <span>Next</span>
-            <span>→</span>
+            <span>&rarr;</span>
           </button>
         </div>
-
-        <p class="text-xs text-slate-400 mt-4 text-center">
-          Keyboard shortcuts: <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">Space</kbd> Flip &bull; <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">←</kbd> Prev &bull; <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">→</kbd> Next &bull; <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">S</kbd> Shuffle
-        </p>
-
       </div>
     </section>
 
-    <!-- ========================================== -->
-    <!-- TAB 2: QUICK CRAM SHEET                    -->
-    <!-- ========================================== -->
+    <!-- TAB 2: CRAM MATRIX -->
     <section id="tab-cram" class="space-y-6 hidden">
-      
-      <!-- Search & Notice -->
       <div class="bg-slate-800/60 p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
         <div class="w-full sm:w-72 relative">
-          <input type="text" id="cram-search" oninput="filterCramTable()" placeholder="Search buzzwords (e.g., bounding box, MSE)..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white placeholder-slate-400 focus:outline-none focus:border-blue-500">
-          <span class="absolute right-3 top-2.5 text-xs text-slate-400">🔍</span>
+          <input type="text" id="cram-search" oninput="window.filterCramTable()" placeholder="Search buzzwords (e.g., bounding box, MSE)..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white placeholder-slate-400 focus:outline-none focus:border-blue-500">
         </div>
-        <p class="text-xs text-slate-400 text-center sm:text-right">
-          Skim this 15 mins before your exam to lock in instant pattern matching!
-        </p>
+        <p class="text-xs text-slate-400">Skim this before stepping into the exam room.</p>
       </div>
 
-      <!-- Tricky Trap Pair Breakdown Cards -->
-      <div class="space-y-3">
-        <h3 class="text-sm font-bold text-amber-300 uppercase tracking-wider flex items-center space-x-2">
-          <span>⚡</span>
-          <span>High-Yield Trap Pairs (Microsoft Loves Testing These)</span>
-        </h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-          
-          <div class="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/80 space-y-1.5">
-            <div class="font-bold text-white text-sm">Fairness vs. Inclusiveness</div>
-            <p class="text-slate-300"><strong class="text-blue-300">Fairness:</strong> AI treats all similar groups equally without demographic bias (gender, race, age, loans).</p>
-            <p class="text-slate-300"><strong class="text-emerald-300">Inclusiveness:</strong> AI empowers all human abilities (accessibility, screen readers, speech impediments).</p>
-          </div>
-
-          <div class="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/80 space-y-1.5">
-            <div class="font-bold text-white text-sm">Transparency vs. Accountability</div>
-            <p class="text-slate-300"><strong class="text-blue-300">Transparency:</strong> Humans can understand <em>how and why</em> the model reached a decision.</p>
-            <p class="text-slate-300"><strong class="text-emerald-300">Accountability:</strong> Humans/designers are legally and ethically responsible for outcomes.</p>
-          </div>
-
-          <div class="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/80 space-y-1.5">
-            <div class="font-bold text-white text-sm">Azure AI Vision vs. Custom Vision</div>
-            <p class="text-slate-300"><strong class="text-blue-300">AI Vision:</strong> Pre-trained model out of the box for 10,000+ generic items, OCR, captions.</p>
-            <p class="text-slate-300"><strong class="text-emerald-300">Custom Vision:</strong> You bring your own images to label domain-specific classes (e.g., your company's product parts).</p>
-          </div>
-
-          <div class="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/80 space-y-1.5">
-            <div class="font-bold text-white text-sm">AI Assistant vs. AI Agent (AI-901 Modern Update)</div>
-            <p class="text-slate-300"><strong class="text-blue-300">Assistant:</strong> Reactive, turn-by-turn prompt response to boost human user productivity.</p>
-            <p class="text-slate-300"><strong class="text-emerald-300">Agent:</strong> Autonomous, proactive, triggers off events, does multi-step planning towards a user goal.</p>
-          </div>
-
-          <div class="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/80 space-y-1.5">
-            <div class="font-bold text-white text-sm">Multi-modal vs. Multi-model</div>
-            <p class="text-slate-300"><strong class="text-blue-300">Multi-modal:</strong> A single model handling 2+ formats (e.g., GPT-4o takes text + image in, generates text + audio).</p>
-            <p class="text-slate-300"><strong class="text-emerald-300">Multi-model:</strong> An application pipeline linking multiple separate models (Speech-to-Text → LLM → Text-to-Speech).</p>
-          </div>
-
-          <div class="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/80 space-y-1.5">
-            <div class="font-bold text-white text-sm">Deterministic vs. Generative Models</div>
-            <p class="text-slate-300"><strong class="text-blue-300">Deterministic (Language Service):</strong> Same input always yields identical structured output (cheaper, consistent).</p>
-            <p class="text-slate-300"><strong class="text-emerald-300">Generative (OpenAI / LLMs):</strong> Probabilistic, creative natural text responses (can vary per run).</p>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- Buzzword to Service Table -->
       <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-850">
         <table class="w-full text-left text-xs sm:text-sm">
           <thead class="bg-slate-800/80 text-slate-300 text-xs uppercase font-bold tracking-wider border-b border-slate-700">
             <tr>
-              <th class="p-3 sm:p-4 w-1/3">Exam Scenario / Buzzwords</th>
-              <th class="p-3 sm:p-4 w-1/3">Target Azure Service / Concept</th>
-              <th class="p-3 sm:p-4 w-1/3">Why & Exam Key</th>
+              <th class="p-3 sm:p-4 w-1/3">Exam Trigger / Buzzwords</th>
+              <th class="p-3 sm:p-4 w-1/3">Target Service / Concept</th>
+              <th class="p-3 sm:p-4 w-1/3">Exam Summary</th>
             </tr>
           </thead>
-          <tbody id="cram-table-body" class="divide-y divide-slate-800 text-slate-200">
-            <!-- Dynamically populated by JS -->
-          </tbody>
+          <tbody id="cram-table-body" class="divide-y divide-slate-800 text-slate-200"></tbody>
         </table>
       </div>
-
     </section>
 
-    <!-- ========================================== -->
-    <!-- TAB 3: PRACTICE DRILL QUIZ
+    <!-- TAB 3: QUIZ -->
+    <section id="tab-quiz" class="space-y-6 hidden">
+      <div class="bg-slate-800/50 p-4 rounded-2xl border border-slate-800 flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-bold text-white">Rapid-Fire Exam Drill</h2>
+          <p class="text-xs text-slate-400">12 targeted multiple choice scenario questions.</p>
+        </div>
+        <div id="quiz-score-badge" class="px-3 py-1.5 rounded-xl bg-blue-600/20 text-blue-300 border border-blue-500/30 text-xs font-bold">
+          Score: 0 / 12
+        </div>
+      </div>
+      <div id="quiz-container" class="space-y-4"></div>
+      <div class="text-center pt-4">
+        <button onclick="window.resetQuiz()" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-all">
+          &#128257; Reset Quiz
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- AGAM'S NOTE MODAL -->
+  <div id="love-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-gradient-to-br from-slate-900 to-rose-950 border border-rose-500/40 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-center space-y-4">
+      <div class="w-16 h-16 rounded-full bg-rose-500/20 border border-rose-500/30 mx-auto flex items-center justify-center text-3xl">
+        &#128150;
+      </div>
+      <div>
+        <h3 class="text-xl font-extrabold text-white">Purva, You’re Going to Ace This!</h3>
+        <p class="text-rose-300 text-xs font-semibold mt-1">A reminder from Agam</p>
+      </div>
+      <p class="text-slate-200 text-sm leading-relaxed">
+        You've put in the preparation and you know this material. Trust your instinct, read each scenario carefully, and go get that certification!
+      </p>
+      <div class="p-3 rounded-2xl bg-rose-900/30 border border-rose-500/20 text-rose-200 text-xs italic">
+        "Behind every certified cloud pro is someone who believed in her from day one." &mdash; Agam
+      </div>
+      <button onclick="window.hideAgamNote()" class="w-full py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-sm shadow-lg shadow-rose-600/30 transition-all">
+        Back to Prep
+      </button>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    const flashcardsData = [
+      { id: 1, domain: "responsible", domainName: "Responsible AI", question: "A loan-approval model grants higher approval rates to male applicants over female applicants with identical credit history. Which Responsible AI principle is violated?", answer: "Fairness", explanation: "Fairness ensures systems treat similarly situated groups without demographic bias regarding gender, ethnicity, or background.", trap: "Equal demographic treatment = Fairness. Accessibility for disabilities = Inclusiveness." },
+      { id: 2, domain: "responsible", domainName: "Responsible AI", question: "An autonomous car AI system must function reliably and safely even in harsh blizzards, sensor glare, or loss of connectivity. Which principle governs this?", answer: "Reliability and Safety", explanation: "AI must perform consistently and safely in unexpected conditions and edge cases.", trap: "Failure handling and safety in bad weather = Reliability and Safety." },
+      { id: 3, domain: "responsible", domainName: "Responsible AI", question: "A public portal ensures that blind users with screen readers and users with motor disabilities can interact seamlessly. Which principle is this?", answer: "Inclusiveness", explanation: "Inclusiveness ensures AI systems empower everyone regardless of physical ability or disability.", trap: "Accessibility for disabilities = Inclusiveness." },
+      { id: 4, domain: "responsible", domainName: "Responsible AI", question: "A medical AI marks a patient for urgent cardiac care. Doctors require an understandable explanation of which factors caused the prediction. Which principle is this?", answer: "Transparency", explanation: "Transparency mandates that decisions produced by AI are explainable and interpretable by humans.", trap: "Explainable models = Transparency." },
+      { id: 5, domain: "responsible", domainName: "Responsible AI", question: "Who is held legally and ethically accountable for decisions made by an automated AI pipeline?", answer: "Accountability (Human Designers & Operators)", explanation: "Human creators and deploying organizations remain fully accountable for their AI systems.", trap: "AI models cannot be held liable; humans must remain accountable." },
+      { id: 6, domain: "responsible", domainName: "Responsible AI", question: "Monitoring real-time telemetry from industrial engines to detect sudden temperature spikes before equipment failure is an example of which workload?", answer: "Anomaly Detection", explanation: "Anomaly detection identifies outliers and unexpected spikes across time-series data streams.", trap: "Spikes, fraud detection, and unexpected deviations = Anomaly Detection." },
+      { id: 7, domain: "ml", domainName: "Machine Learning", question: "You need to predict the final transaction sale price of a car based on its mileage, age, and horsepower. Which ML technique should be used?", answer: "Regression (Supervised ML)", explanation: "Regression predicts a continuous numeric value based on historical labeled data.", trap: "Predicting a continuous number = Regression. Predicting a category = Classification." },
+      { id: 8, domain: "ml", domainName: "Machine Learning", question: "An incoming email is classified as either Spam (1) or Not Spam (0). What specific type of machine learning is this?", answer: "Binary Classification", explanation: "Classification predicts discrete categories. When there are exactly two outcomes, it is Binary Classification.", trap: "Two outcomes = Binary Classification. Three or more = Multi-class." },
+      { id: 9, domain: "ml", domainName: "Machine Learning", question: "You want to partition unlabelled customer profiles into natural shopping behavior groups without predefined classes. Which ML technique applies?", answer: "Clustering (Unsupervised ML)", explanation: "Clustering discovers natural patterns and groups in data without pre-existing labels.", trap: "Unlabelled data + grouping by similarity = Clustering." },
+      { id: 10, domain: "ml", domainName: "Machine Learning", question: "In a dataset with [Area, Bedrooms, Zipcode, HousePrice], which columns are Features and which is the Label?", answer: "Features = [Area, Bedrooms, Zipcode]; Label = HousePrice", explanation: "Features (X) are input attributes. The Label (Y) is the target variable being predicted.", trap: "Inputs = Features; Target outcome to predict = Label." },
+      { id: 11, domain: "ml", domainName: "Machine Learning", question: "Why do data teams split datasets into Training and Validation/Test sets?", answer: "To evaluate model accuracy on unseen data and prevent overfitting", explanation: "Training teaches the model patterns, while validation tests how well it generalizes to unseen records.", trap: "Never evaluate a model on the exact data used to train it." },
+      { id: 12, domain: "ml", domainName: "Machine Learning", question: "Which Azure Machine Learning capability automatically trains multiple algorithms and ranks them on a leaderboard to find the best model?", answer: "Automated Machine Learning (AutoML)", explanation: "AutoML automates algorithm exploration, feature engineering, and hyperparameter tuning.", trap: "No-code algorithm tournament with a leaderboard = AutoML." },
+      { id: 13, domain: "ml", domainName: "Machine Learning", question: "Which visual canvas tool in Azure Machine Learning allows drag-and-drop construction of data prep, training, and scoring pipelines?", answer: "Azure Machine Learning Designer", explanation: "Azure ML Designer offers an interactive visual canvas for building ML pipelines without writing code.", trap: "Drag-and-drop visual workflow canvas = Azure ML Designer." },
+      { id: 14, domain: "ml", domainName: "Machine Learning", question: "Which metric evaluates regression models by penalizing large outlier errors much more severely than small errors?", answer: "Mean Squared Error (MSE / RMSE)", explanation: "By squaring differences between actual and predicted values, MSE disproportionately penalizes large mistakes.", trap: "Regression metrics = MSE, RMSE, MAE. Classification metrics = Accuracy, Precision, Recall." },
+      { id: 15, domain: "vision", domainName: "Computer Vision", question: "What is the key difference between Image Classification and Object Detection?", answer: "Classification gives 1 label per image; Object Detection gives labels + bounding boxes", explanation: "Image classification categorizes the overall image. Object detection locates items with coordinates (x, y, w, h).", trap: "Bounding box coordinates = Object Detection." },
+      { id: 16, domain: "vision", domainName: "Computer Vision", question: "What is the key difference between Object Detection and Semantic Segmentation?", answer: "Object Detection draws rectangles; Semantic Segmentation classifies every individual pixel", explanation: "Semantic segmentation creates a pixel-level mask coloring exactly which pixels belong to which object.", trap: "Pixel-level boundary mask = Semantic Segmentation." },
+      { id: 17, domain: "vision", domainName: "Computer Vision", question: "Extracting printed or handwritten text characters from street signs, receipts, or PDF documents is known as:", answer: "Optical Character Recognition (OCR)", explanation: "OCR extracts alphanumeric text characters from image pixels and converts them to digital strings.", trap: "Text character extraction = OCR (part of Azure AI Vision)." },
+      { id: 18, domain: "vision", domainName: "Computer Vision", question: "You need an image model trained to identify your company's proprietary manufactured machine parts. Should you use Azure AI Vision or Custom Vision?", answer: "Azure Custom Vision", explanation: "Azure AI Vision is pre-trained on generic objects. Custom Vision lets you train proprietary image sets.", trap: "Proprietary or custom classes = Azure Custom Vision." },
+      { id: 19, domain: "vision", domainName: "Computer Vision", question: "Which Face service feature detects face rectangles, and which requires Microsoft Limited Access approval?", answer: "Face Detection is standard; Facial Identification requires approval", explanation: "Detecting face coordinates is broadly available, but 1:1 facial verification and recognition require Microsoft approval.", trap: "Face Detection = standard. Recognition / ID = requires approval." },
+      { id: 20, domain: "vision", domainName: "Computer Vision", question: "Which Azure service analyzes video files to extract transcripts, speaker identities, face appearances, and key visual topics?", answer: "Azure AI Video Indexer", explanation: "Video Indexer extracts multi-channel metadata from audio and visual tracks to make video searchable.", trap: "Video metadata and transcription extraction = Azure AI Video Indexer." },
+      { id: 21, domain: "vision", domainName: "Computer Vision", question: "How do modern Diffusion models (like DALL-E) generate images from text prompts?", answer: "By learning to reverse noise step-by-step from static into structure", explanation: "Diffusion models are trained by adding noise to images and learning the reverse denoising process.", trap: "Denoising / reverse noise = Diffusion models." },
+      { id: 22, domain: "nlp", domainName: "NLP & Speech", question: "In Conversational Language Understanding, define Utterance, Intent, and Entity.", answer: "Utterance = user phrase; Intent = user goal; Entity = specific parameter", explanation: "For 'Book a room in Mumbai': the whole phrase is the Utterance, 'BookRoom' is the Intent, 'Mumbai' is the Entity.", trap: "Utterance = spoken phrase; Intent = action; Entity = data variable." },
+      { id: 23, domain: "nlp", domainName: "NLP & Speech", question: "Analyzing customer reviews to assign an emotion score from 0.0 to 1.0 (positive/negative) is known as:", answer: "Sentiment Analysis (Azure AI Language)", explanation: "Sentiment Analysis scores text from 0.0 to 1.0 to reflect positive, neutral, or negative sentiment.", trap: "Emotion scoring = Sentiment Analysis." },
+      { id: 24, domain: "nlp", domainName: "NLP & Speech", question: "Extracting the main talking points and core discussion topics from long technical whitepapers is called:", answer: "Key Phrase Extraction", explanation: "Key phrase extraction identifies significant talking points without requiring pre-trained custom rules.", trap: "Main topics = Key Phrase Extraction. Specific names/dates = Entity Recognition." },
+      { id: 25, domain: "nlp", domainName: "NLP & Speech", question: "Which Azure service provides bidirectional Speech-to-Text transcription and Text-to-Speech synthesis with neural voices?", answer: "Azure AI Speech", explanation: "Azure AI Speech handles speech-to-text, natural text-to-speech synthesis, and live audio translation.", trap: "Audio transcription and voice synthesis = Azure AI Speech." },
+      { id: 26, domain: "nlp", domainName: "NLP & Speech", question: "Which specialized service parses invoices and receipts to extract structured fields like Merchant, Tax, and Total?", answer: "Azure AI Document Intelligence", explanation: "Document Intelligence (Content Understanding) uses pre-built models to extract key-value pairs from forms.", trap: "Raw text = OCR; Key-value form fields = Document Intelligence." },
+      { id: 27, domain: "nlp", domainName: "NLP & Speech", question: "Why choose Azure AI Language over a Generative LLM for detecting text language?", answer: "It is deterministic (consistent), faster, and lower cost", explanation: "Deterministic models return the exact same structured result and confidence score every time at low cost.", trap: "Deterministic = predictable and structured. Generative = creative and probabilistic." },
+      { id: 28, domain: "genai", domainName: "GenAI & Foundry", question: "What is the primary difference between an AI Assistant and an AI Agent?", answer: "Assistants are reactive and prompt-driven; Agents are proactive and autonomous", explanation: "Assistants respond turn-by-turn. Agents are event-triggered, plan multiple steps, and use tools to achieve goals.", trap: "Turn-by-turn = Assistant; Autonomous multi-step goal execution = Agent." },
+      { id: 29, domain: "genai", domainName: "GenAI & Foundry", question: "What is Microsoft Foundry (ai.azure.com)?", answer: "The unified platform for discovering, deploying, and managing models & agents", explanation: "Foundry provides access to over 10,000 models, agent development workflows, and guardrails.", trap: "Unified model catalog + agent studio = Microsoft Foundry." },
+      { id: 30, domain: "genai", domainName: "GenAI & Foundry", question: "What is the relationship between a Token and an Embedding in language models?", answer: "Tokens are word fragments; Embeddings are high-dimensional vectors representing meaning", explanation: "Text is broken into tokens (~4 characters). Tokens are converted into mathematical embedding vectors.", trap: "Text fragment = Token; Vector representing semantic meaning = Embedding." },
+      { id: 31, domain: "genai", domainName: "GenAI & Foundry", question: "What is the difference between Multi-modal and Multi-model?", answer: "Multi-modal = 1 model supporting 2+ media formats; Multi-model = application using multiple models", explanation: "Multi-modal means one model handles text, audio, and images. Multi-model is an app pipeline chaining separate models.", trap: "One model handling text + image = Multi-modal. Chaining multiple models = Multi-model." },
+      { id: 32, domain: "genai", domainName: "GenAI & Foundry", question: "When would you choose a Small Language Model (SLM) like Phi over an LLM like GPT-4o?", answer: "When you need lower latency, reduced cost, or localized on-device processing", explanation: "SLMs have millions of parameters rather than billions, making inference fast, lightweight, and cost-effective.", trap: "Millions of parameters, cheaper, faster = SLM." },
+      { id: 33, domain: "genai", domainName: "GenAI & Foundry", question: "An EU organization has strict data sovereignty rules. Which deployment type should they choose in Foundry?", answer: "Data Zone deployment (Europe)", explanation: "Data Zone ensures model execution and data stay strictly within designated geographic boundaries (US or EU).", trap: "Global = anywhere worldwide; Data Zone = US or EU only; Regional = single region." },
+      { id: 34, domain: "genai", domainName: "GenAI & Foundry", question: "What are the four stages of the Microsoft Responsible Generative AI lifecycle?", answer: "1. Identify harms -> 2. Measure presence -> 3. Mitigate harms -> 4. Operate responsibly", explanation: "Teams identify risks, measure them with test prompts, mitigate across layers, and operate with monitoring.", trap: "Remember the sequence: Identify -> Measure -> Mitigate -> Operate." },
+      { id: 35, domain: "genai", domainName: "GenAI & Foundry", question: "What is the difference between a System Prompt and a User Prompt in LLM completions?", answer: "System Prompt defines persona and rules; User Prompt is the user's immediate question", explanation: "System prompts set instructions and safety rules. User prompts represent the actual user input.", trap: "Persona and behavior rules = System Prompt. Query = User Prompt." },
+      { id: 36, domain: "genai", domainName: "GenAI & Foundry", question: "What is the recommended security practice for authenticating Azure AI applications without hardcoded keys?", answer: "Microsoft Entra ID with Managed Identities", explanation: "Managed Identities handle authentication automatically without exposing secrets in source code.", trap: "Never commit API keys. Best practice = Microsoft Entra ID Managed Identity." }
+    ];
+
+    const cramTableData = [
+      { trigger: "Predict future house price, revenue, temperature", service: "Regression", note: "Continuous numerical output. Supervised ML." },
+      { trigger: "Classify spam vs not spam, approved vs rejected", service: "Binary Classification", note: "Two discrete categorical classes. Supervised ML." },
+      { trigger: "Classify photo into dog, cat, car, or plane", service: "Multi-class Classification", note: "Multiple discrete classes. Supervised ML." },
+      { trigger: "Group unlabelled customers by purchasing habits", service: "Clustering", note: "Unsupervised learning. Discovers natural groupings." },
+      { trigger: "Input variables in a dataset (X)", service: "Features", note: "Independent attributes used to train the model." },
+      { trigger: "Target outcome variable to predict (Y)", service: "Label", note: "The target column in supervised datasets." },
+      { trigger: "Evaluate regression error penalizing large mistakes heavily", service: "Mean Squared Error (MSE / RMSE)", note: "Squaring differences heavily penalizes outliers." },
+      { trigger: "Drag-and-drop ML pipeline builder canvas", service: "Azure ML Designer", note: "Visual no-code pipeline creation." },
+      { trigger: "Automated tournament of algorithms with a leaderboard", service: "Automated ML (AutoML)", note: "Automatically picks the best algorithm and parameters." },
+      { trigger: "Single label describing the entire photograph", service: "Image Classification", note: "Categorizes the image subject as a whole." },
+      { trigger: "Locate objects with bounding box coordinates", service: "Object Detection", note: "Outputs object labels + rectangular coordinates." },
+      { trigger: "Classify and mask each individual pixel of an object", service: "Semantic Segmentation", note: "Pixel-by-pixel boundary segmentation." },
+      { trigger: "Extract printed or handwritten text characters from image/PDF", service: "Optical Character Recognition (OCR)", note: "Raw text stream extraction." },
+      { trigger: "Extract key-value pairs and totals from invoices/receipts", service: "Azure AI Document Intelligence", note: "Structured form understanding." },
+      { trigger: "Train vision models on proprietary company images", service: "Azure Custom Vision", note: "Upload custom labeled dataset to train model." },
+      { trigger: "Video transcription, speaker face tags, topic indexing", service: "Azure AI Video Indexer", note: "Extracts searchable metadata from video archives." },
+      { trigger: "User statement in conversational AI", service: "Utterance", note: "What the user literally inputs or speaks." },
+      { trigger: "User goal or desired action in conversational AI", service: "Intent", note: "The task the user wants to trigger (e.g., BookFlight)." },
+      { trigger: "Specific parameter extracted from an utterance", service: "Entity", note: "Variable data like Date, City, or Name." },
+      { trigger: "Score text emotion from 0.0 to 1.0", service: "Sentiment Analysis", note: "Evaluates sentiment in reviews and comments." },
+      { trigger: "Convert spoken speech audio to text transcription", service: "Speech-to-Text", note: "Part of Azure AI Speech service." },
+      { trigger: "Synthesize lifelike voice audio from written text", service: "Text-to-Speech (Neural Voices)", note: "Part of Azure AI Speech service." },
+      { trigger: "Equal treatment regardless of gender, race, or ethnicity", service: "Fairness", note: "Responsible AI principle preventing demographic bias." },
+      { trigger: "Ensuring accessibility for people with disabilities", service: "Inclusiveness", note: "Responsible AI principle for human empowerment." },
+      { trigger: "Operating dependably during storms and edge cases", service: "Reliability and Safety", note: "Responsible AI principle preventing harmful failures." },
+      { trigger: "Explaining how and why an AI model reached a conclusion", service: "Transparency", note: "Responsible AI principle for interpretability." },
+      { trigger: "Human designers held responsible for AI outcomes", service: "Accountability", note: "Responsible AI principle for human ownership." },
+      { trigger: "Unified portal with 10,000+ models and agent builder", service: "Microsoft Foundry (ai.azure.com)", note: "The modern pro-developer AI hub." },
+      { trigger: "Reactive AI responding turn-by-turn to prompts", service: "AI Assistant", note: "Productivity booster controlled by human turns." },
+      { trigger: "Autonomous AI planning multi-step actions to achieve user goal", service: "AI Agent", note: "Proactive, event-driven, autonomous execution." },
+      { trigger: "High-dimensional vector representing mathematical semantic meaning", service: "Embedding", note: "Powers vector search and similarity matching." },
+      { trigger: "Word fragment fed into language models", service: "Token", note: "Base unit of text consumption and billing in LLMs." },
+      { trigger: "One model processing multiple media types (text, audio, image)", service: "Multi-modal Model", note: "e.g., GPT-4o accepting image and generating audio." },
+      { trigger: "Application pipeline chaining multiple specialized models", service: "Multi-model Architecture", note: "Orchestrating separate models in a workflow." },
+      { trigger: "Lightweight, faster, cheaper distilled language model", service: "Small Language Model (SLM)", note: "e.g., Phi family (millions of parameters)." },
+      { trigger: "Dedicated capacity with predictable, low-latency performance", service: "Provisioned Throughput Units (PTUs)", note: "Reserved throughput deployment option in Foundry." },
+      { trigger: "Best practice authentication avoiding code API keys", service: "Microsoft Entra ID (Managed Identity)", note: "Secure cloud identity. Never put keys in git!" }
+    ];
+
+    const quizData = [
+      { question: "1. A retail chain wants to build an AI model to predict the total dollar amount a shopper will spend during the holidays based on past history. Which type of machine learning should they use?", options: ["Clustering", "Regression", "Binary Classification", "Semantic Segmentation"], correct: 1, explanation: "Predicting a continuous numerical value (total dollar amount) is Regression." },
+      { question: "2. An insurance model approves claims at a significantly lower rate for applicants from specific minority zip codes despite identical creditworthiness. Which Responsible AI principle is violated?", options: ["Reliability and Safety", "Inclusiveness", "Fairness", "Transparency"], correct: 2, explanation: "Fairness requires that systems treat similar groups equally without demographic bias." },
+      { question: "3. A traffic application needs to identify every bicycle in a video frame and draw a rectangular bounding box around each one with pixel coordinates. Which computer vision technique is this?", options: ["Image Classification", "Object Detection", "Optical Character Recognition", "Facial Verification"], correct: 1, explanation: "Object Detection identifies multiple items and returns rectangular coordinates (bounding boxes)." },
+      { question: "4. You need to parse hundreds of scanned vendor invoices each week to automatically extract Vendor Name, Date, Tax, and Grand Total. Which service should you choose?", options: ["Azure AI Vision (standard OCR only)", "Azure AI Document Intelligence", "Azure Custom Vision", "Azure AI Translator"], correct: 1, explanation: "Azure AI Document Intelligence extracts structured key-value pairs and tabular data from business documents." },
+      { question: "5. A user says: 'Schedule a dentist appointment for Friday at 3 PM'. In conversational language understanding, what is 'ScheduleAppointment'?", options: ["Utterance", "Entity", "Intent", "Metaprompt"], correct: 2, explanation: "The Intent represents the goal or action the user wants to perform." },
+      { question: "6. An architecture takes user audio, uses Model A for speech-to-text, Model B for reasoning, and Model C for speech synthesis. This architecture is an example of:", options: ["Multi-modal model", "Multi-model application", "Unsupervised clustering", "Small language distillation"], correct: 1, explanation: "Multi-model applications orchestrate multiple specialized models in an end-to-end pipeline." },
+      { question: "7. You are building a system that monitors emails, plans multi-step actions across internal databases without human intervention, and books travel when approved. This is:", options: ["An AI Assistant", "An AI Agent", "A Regression Model", "Azure ML Designer"], correct: 1, explanation: "AI Agents are proactive, autonomous, and goal-driven, executing multi-step workflows." },
+      { question: "8. When deploying an AI model in Microsoft Foundry, an EU enterprise selects 'Data Zone deployment'. What does this ensure?", options: ["The model can only be accessed during European working hours", "Data processing and model inference remain strictly within EU data centers", "The model uses half as many tokens", "The model is completely free of charge"], correct: 1, explanation: "Data Zone deployment restricts execution strictly to US or European data centers for compliance." },
+      { question: "9. What is the recommended method for an Azure service to authenticate against Azure AI services securely in production?", options: ["Hardcode API Key 1 directly in the code repository", "Use Microsoft Entra ID with Managed Identity", "Pass credentials inside public query parameters", "Disable authentication endpoints"], correct: 1, explanation: "Microsoft Entra ID with Managed Identity eliminates hardcoded secrets and automatically rotates tokens." },
+      { question: "10. What are the four stages of the Microsoft Responsible Generative AI lifecycle in proper order?", options: ["Deploy -> Test -> Scale -> Fix", "Identify harms -> Measure presence -> Mitigate harms -> Operate responsibly", "Prompt -> Generate -> Validate -> Terminate", "Collect -> Train -> Score -> Deploy"], correct: 1, explanation: "The official lifecycle stages are: 1. Identify -> 2. Measure -> 3. Mitigate -> 4. Operate." },
+      { question: "11. A data science team splits 100,000 labeled records into 70,000 for training and 30,000 for validation. What is the purpose of the validation dataset?", options: ["To speed up the internet connection during training", "To evaluate the model's accuracy on unseen data and prevent overfitting", "To store customer passwords securely", "To convert classification into clustering"], correct: 1, explanation: "Validation datasets assess how well the model generalizes to new, unseen data." },
+      { question: "12. In text processing, what is the key difference between a Token and an Embedding?", options: ["Tokens are high-dimensional vectors; Embeddings are raw letters", "Tokens are word fragments/IDs; Embeddings are high-dimensional vectors representing semantic meaning", "Tokens are only used in Computer Vision; Embeddings are used in SQL", "There is no difference; they are exact synonyms"], correct: 1, explanation: "Tokens represent text segments (~4 characters); Embeddings represent their semantic meaning as mathematical vectors." }
+    ];
+
+    let currentCards = [...flashcardsData];
+    let currentIndex = 0;
+    let isFlipped = false;
+    let quizAnswers = {};
+
+    window.switchTab = function(tabId) {
+      document.getElementById('tab-flashcards').classList.add('hidden');
+      document.getElementById('tab-cram').classList.add('hidden');
+      document.getElementById('tab-quiz').classList.add('hidden');
+
+      ['flashcards', 'cram', 'quiz'].forEach(t => {
+        const btn = document.getElementById('tab-btn-' + t);
+        if (t === tabId) {
+          btn.className = "flex-1 sm:flex-initial flex items-center justify-center space-x-2 px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all text-white bg-blue-600 shadow-sm shadow-blue-500/30";
+        } else {
+          btn.className = "flex-1 sm:flex-initial flex items-center justify-center space-x-2 px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800";
+        }
+      });
+      document.getElementById('tab-' + tabId).classList.remove('hidden');
+    };
+
+    window.renderCard = function() {
+      if (currentCards.length === 0) return;
+      const card = currentCards[currentIndex];
+      const inner = document.getElementById('flashcard-inner');
+
+      isFlipped = false;
+      inner.classList.remove('flipped');
+
+      document.getElementById('card-domain-badge').innerText = card.domainName;
+      document.getElementById('card-counter').innerText = (currentIndex + 1) + " / " + currentCards.length;
+      document.getElementById('card-question').innerText = card.question;
+
+      document.getElementById('card-domain-badge-back').innerText = card.domainName;
+      document.getElementById('card-answer').innerText = card.answer;
+      document.getElementById('card-explanation').innerText = card.explanation;
+      document.getElementById('card-trap').innerText = card.trap;
+    };
+
+    window.flipCard = function() {
+      isFlipped = !isFlipped;
+      const inner = document.getElementById('flashcard-inner');
+      if (isFlipped) {
+        inner.classList.add('flipped');
+      } else {
+        inner.classList.remove('flipped');
+      }
+    };
+
+    window.nextCard = function() {
+      currentIndex = (currentIndex < currentCards.length - 1) ? currentIndex + 1 : 0;
+      window.renderCard();
+    };
+
+    window.prevCard = function() {
+      currentIndex = (currentIndex > 0) ? currentIndex - 1 : currentCards.length - 1;
+      window.renderCard();
+    };
+
+    window.shuffleCards = function() {
+      for (let i = currentCards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const temp = currentCards[i];
+        currentCards[i] = currentCards[j];
+        currentCards[j] = temp;
+      }
+      currentIndex = 0;
+      window.renderCard();
+    };
+
+    window.filterDomain = function(domainKey) {
+      document.querySelectorAll('.domain-btn').forEach(btn => {
+        if (btn.getAttribute('data-domain') === domainKey) {
+          btn.className = "domain-btn px-3 py-1 text-xs rounded-lg font-medium transition-all bg-blue-600 text-white";
+        } else {
+          btn.className = "domain-btn px-3 py-1 text-xs rounded-lg font-medium transition-all bg-slate-800 text-slate-300 hover:bg-slate-700";
+        }
+      });
+
+      if (domainKey === 'all') {
+        currentCards = [...flashcardsData];
+      } else {
+        currentCards = flashcardsData.filter(c => c.domain === domainKey);
+      }
+      currentIndex = 0;
+      window.renderCard();
+    };
+
+    window.renderCramTable = function(filterText = '') {
+      const tbody = document.getElementById('cram-table-body');
+      tbody.innerHTML = '';
+      const query = filterText.toLowerCase().trim();
+
+      const filtered = cramTableData.filter(item =>
+        item.trigger.toLowerCase().includes(query) ||
+        item.service.toLowerCase().includes(query) ||
+        item.note.toLowerCase().includes(query)
+      );
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" class="p-6 text-center text-slate-400">No matching keywords found.</td></tr>';
+        return;
+      }
+
+      filtered.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-800/40 transition-colors";
+        tr.innerHTML = '<td class="p-3 sm:p-4 font-medium text-slate-200">' + item.trigger + '</td>' +
+                       '<td class="p-3 sm:p-4 font-bold text-emerald-300">' + item.service + '</td>' +
+                       '<td class="p-3 sm:p-4 text-slate-300 text-xs">' + item.note + '</td>';
+        tbody.appendChild(tr);
+      });
+    };
+
+    window.filterCramTable = function() {
+      const val = document.getElementById('cram-search').value;
+      window.renderCramTable(val);
+    };
+
+    window.renderQuiz = function() {
+      const container = document.getElementById('quiz-container');
+      container.innerHTML = '';
+
+      quizData.forEach((q, qIndex) => {
+        const card = document.createElement('div');
+        card.className = "p-5 rounded-2xl bg-slate-800/60 border border-slate-800 space-y-3";
+
+        let optionsHtml = '';
+        q.options.forEach((opt, optIndex) => {
+          optionsHtml += '<button onclick="window.selectQuizAnswer(' + qIndex + ',' + optIndex + ')" id="quiz-opt-' + qIndex + '-' + optIndex + '" class="w-full text-left p-3 rounded-xl bg-slate-900/80 hover:bg-slate-700/80 border border-slate-700/80 text-xs sm:text-sm text-slate-200 transition-all flex items-center justify-between">' +
+                         '<span>' + opt + '</span>' +
+                         '<span id="quiz-badge-' + qIndex + '-' + optIndex + '" class="hidden text-xs font-bold px-2 py-0.5 rounded"></span>' +
+                         '</button>';
+        });
+
+        card.innerHTML = '<h4 class="text-sm sm:text-base font-bold text-white leading-snug">' + q.question + '</h4>' +
+                         '<div class="space-y-2">' + optionsHtml + '</div>' +
+                         '<div id="quiz-exp-' + qIndex + '" class="hidden p-3 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-300 mt-2">' +
+                         '<strong class="text-amber-300 block mb-0.5">Explanation:</strong>' + q.explanation + '</div>';
+        container.appendChild(card);
+      });
+    };
+
+    window.selectQuizAnswer = function(qIndex, optIndex) {
+      if (quizAnswers[qIndex] !== undefined) return;
+      quizAnswers[qIndex] = optIndex;
+      const q = quizData[qIndex];
+      const isCorrect = (optIndex === q.correct);
+
+      const selectedBtn = document.getElementById('quiz-opt-' + qIndex + '-' + optIndex);
+      const badge = document.getElementById('quiz-badge-' + qIndex + '-' + optIndex);
+
+      if (isCorrect) {
+        selectedBtn.classList.remove('bg-slate-900/80', 'border-slate-700/80');
+        selectedBtn.classList.add('bg-emerald-950/80', 'border-emerald-500', 'text-emerald-200');
+        badge.innerText = 'Correct';
+        badge.classList.remove('hidden');
+        badge.classList.add('bg-emerald-500/20', 'text-emerald-300');
+      } else {
+        selectedBtn.classList.remove('bg-slate-900/80', 'border-slate-700/80');
+        selectedBtn.classList.add('bg-rose-950/80', 'border-rose-500', 'text-rose-200');
+        badge.innerText = 'Incorrect';
+        badge.classList.remove('hidden');
+        badge.classList.add('bg-rose-500/20', 'text-rose-300');
+
+        const correctBtn = document.getElementById('quiz-opt-' + qIndex + '-' + q.correct);
+        correctBtn.classList.add('bg-emerald-950/40', 'border-emerald-500/60', 'text-emerald-200');
+      }
+
+      document.getElementById('quiz-exp-' + qIndex).classList.remove('hidden');
+
+      let score = 0;
+      Object.keys(quizAnswers).forEach(idx => {
+        if (quizAnswers[idx] === quizData[idx].correct) score++;
+      });
+      document.getElementById('quiz-score-badge').innerText = 'Score: ' + score + ' / ' + quizData.length;
+    };
+
+    window.resetQuiz = function() {
+      quizAnswers = {};
+      window.renderQuiz();
+      document.getElementById('quiz-score-badge').innerText = 'Score: 0 / ' + quizData.length;
+    };
+
+    window.showAgamNote = function() {
+      document.getElementById('love-modal').classList.remove('hidden');
+    };
+
+    window.hideAgamNote = function() {
+      document.getElementById('love-modal').classList.add('hidden');
+    };
+
+    document.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+      if (document.getElementById('tab-flashcards').classList.contains('hidden')) return;
+      if (e.code === 'Space') { e.preventDefault(); window.flipCard(); }
+      else if (e.code === 'ArrowRight') { e.preventDefault(); window.nextCard(); }
+      else if (e.code === 'ArrowLeft') { e.preventDefault(); window.prevCard(); }
+    });
+
+    // Execute immediately on load
+    window.renderCard();
+    window.renderCramTable();
+    window.renderQuiz();
+  </script>
+</body>
+</html>
